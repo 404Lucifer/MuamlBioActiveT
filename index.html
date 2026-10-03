@@ -1,0 +1,255 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.planner{padding:1.5rem 0;font-family:var(--font-sans);max-width:780px}
+.top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:8px}
+.planner-title{font-size:18px;font-weight:500;color:var(--color-text-primary)}
+.planner-sub{font-size:13px;color:var(--color-text-secondary);margin-top:2px}
+.reset-btn{font-size:12px;padding:5px 12px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-secondary);cursor:pointer;transition:background .15s}
+.reset-btn:hover{background:var(--color-background-secondary)}
+
+.step-row{display:flex;gap:4px;align-items:center;margin-bottom:1.25rem}
+.step-dot{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;flex-shrink:0;border:0.5px solid var(--color-border-tertiary);color:var(--color-text-tertiary);background:var(--color-background-secondary)}
+.step-dot.active{background:#534AB7;border-color:#534AB7;color:#fff}
+.step-dot.done{background:#1D9E75;border-color:#1D9E75;color:#fff}
+.step-line{flex:1;height:1px;background:var(--color-border-tertiary)}
+.step-line.done{background:#1D9E75}
+
+.section-lbl{font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--color-text-tertiary);margin-bottom:.625rem}
+
+.sel-grid{display:grid;gap:8px;margin-bottom:1.25rem}
+.sel-grid.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.sel-grid.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.sel-card{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:.75rem .875rem;cursor:pointer;background:var(--color-background-primary);transition:all .15s;text-align:left}
+.sel-card:hover{background:var(--color-background-secondary);border-color:var(--color-border-secondary)}
+.sel-card.chosen{border:2px solid #534AB7;background:var(--color-background-primary)}
+.sel-card.chosen.teal{border-color:#0F6E56}
+.sel-card.chosen.coral{border-color:#993C1D}
+.sel-card.chosen.amber{border-color:#854F0B}
+.sel-card.chosen.purple{border-color:#534AB7}
+.sel-card.chosen.blue{border-color:#185FA5}
+.sel-card.chosen.green{border-color:#3B6D11}
+.sc-chip{display:inline-flex;align-items:center;width:20px;height:20px;border-radius:4px;font-size:10px;font-weight:500;justify-content:center;margin-bottom:5px}
+.sc-name{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:2px}
+.sc-note{font-size:11px;color:var(--color-text-secondary);line-height:1.3}
+
+.output-card{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);background:var(--color-background-primary);overflow:hidden;margin-bottom:1.25rem}
+.output-header{padding:.875rem 1rem;border-bottom:0.5px solid var(--color-border-tertiary);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.badge{font-size:11px;font-weight:500;padding:3px 9px;border-radius:20px}
+.output-body{padding:1rem}
+.out-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:1rem}
+.out-box{border-radius:var(--border-radius-md);padding:.75rem .875rem;border:0.5px solid var(--color-border-tertiary)}
+.out-box.do{background:var(--color-background-success);border-color:var(--color-border-success)}
+.out-box.dont{background:var(--color-background-danger);border-color:var(--color-border-danger)}
+.ob-label{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.out-box.do .ob-label{color:var(--color-text-success)}
+.out-box.dont .ob-label{color:var(--color-text-danger)}
+.ob-item{font-size:12px;color:var(--color-text-primary);padding:3px 0;border-bottom:0.5px solid var(--color-border-tertiary);line-height:1.4}
+.ob-item:last-child{border-bottom:none}
+.opener-strip{border-left:2px solid #534AB7;border-radius:0;padding:.625rem .875rem;background:var(--color-background-secondary);margin-bottom:.875rem}
+.op-label{font-size:11px;font-weight:500;color:#3C3489;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
+.op-text{font-size:13px;color:var(--color-text-primary);line-height:1.55;font-style:italic}
+.warn-strip{border-left:2px solid #BA7517;border-radius:0;padding:.625rem .875rem;background:#FAEEDA}
+.wl{font-size:11px;font-weight:500;color:#633806;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
+.wt{font-size:12px;color:#412402;line-height:1.4}
+
+.checklist{margin-bottom:1rem}
+.cl-item{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:0.5px solid var(--color-border-tertiary);cursor:pointer}
+.cl-item:last-child{border-bottom:none}
+.cl-box{width:16px;height:16px;border-radius:3px;border:0.5px solid var(--color-border-secondary);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all .15s;background:var(--color-background-primary)}
+.cl-box.checked{background:#1D9E75;border-color:#1D9E75}
+.cl-check{width:9px;height:9px;display:none}
+.cl-box.checked .cl-check{display:block}
+.cl-text{font-size:13px;color:var(--color-text-primary);line-height:1.4}
+.cl-done .cl-text{color:var(--color-text-tertiary);text-decoration:line-through}
+
+.action-row{display:flex;gap:8px;flex-wrap:wrap}
+.btn{padding:.5rem 1.25rem;border-radius:var(--border-radius-md);font-size:13px;cursor:pointer;border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);transition:background .15s}
+.btn:hover{background:var(--color-background-secondary)}
+.btn.p{background:#534AB7;border-color:#534AB7;color:#fff}
+.btn.p:hover{background:#3C3489}
+
+.placeholder{text-align:center;padding:2rem 1rem;color:var(--color-text-tertiary);font-size:13px;line-height:1.6;border:0.5px dashed var(--color-border-tertiary);border-radius:var(--border-radius-lg);margin-bottom:1.25rem}
+</style>
+
+<div class="planner">
+
+<div class="top-bar">
+  <div>
+    <div class="planner-title">Pre-call planning card</div>
+    <div class="planner-sub">Select the doctor type and situation — your call strategy generates instantly.</div>
+  </div>
+  <button class="reset-btn" onclick="resetAll()">Reset</button>
+</div>
+
+<div class="step-row">
+  <div class="step-dot active" id="dot1">1</div>
+  <div class="step-line" id="line1"></div>
+  <div class="step-dot" id="dot2">2</div>
+  <div class="step-line" id="line2"></div>
+  <div class="step-dot" id="dot3">3</div>
+</div>
+
+<div id="step1">
+  <div class="section-lbl">Step 1 — Doctor behaviour type</div>
+  <div class="sel-grid g2" id="type-grid"></div>
+</div>
+
+<div id="step2" style="display:none">
+  <div class="section-lbl">Step 2 — Call situation</div>
+  <div class="sel-grid g3" id="call-grid"></div>
+</div>
+
+<div id="step3" style="display:none">
+  <div class="section-lbl">Step 3 — Your call strategy</div>
+  <div class="output-card" id="output-card"></div>
+  <div class="section-lbl">Pre-call checklist</div>
+  <div style="border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:.875rem 1rem;background:var(--color-background-primary);margin-bottom:1.25rem">
+    <div class="checklist" id="checklist"></div>
+  </div>
+  <div class="action-row">
+    <button class="btn" onclick="goStep(1)">← Change type</button>
+    <button class="btn" onclick="goStep(2)">← Change call</button>
+    <button class="btn p" onclick="sendPrompt('Give me 3 objection-handling scripts for a ' + selType + ' doctor during a ' + selCall + ' call.')">Get objection scripts ↗</button>
+  </div>
+</div>
+
+</div>
+
+<script>
+const types={
+  analytical:{name:'Analytical',note:'Data-driven, detail-oriented',chip:'A',bg:'#E6F1FB',c:'#0C447C',cls:'blue'},
+  driver:{name:'Driver',note:'Goal-focused, time-conscious',chip:'D',bg:'#FAECE7',c:'#712B13',cls:'coral'},
+  amiable:{name:'Amiable',note:'Relationship-oriented, empathetic',chip:'Am',bg:'#EAF3DE',c:'#27500A',cls:'green'},
+  expressive:{name:'Expressive',note:'Enthusiastic, big-picture',chip:'E',bg:'#EEEDFE',c:'#3C3489',cls:'purple'},
+};
+
+const calls={
+  flash:{name:'Flash call',note:'1–2 min, busy doctor',chip:'F',bg:'#E1F5EE',c:'#085041',cls:'teal'},
+  educational:{name:'Educational call',note:'15–30 min, scheduled deep dive',chip:'Ed',bg:'#E6F1FB',c:'#0C447C',cls:'blue'},
+  relationship:{name:'Relationship call',note:'Trust-building, early visits',chip:'R',bg:'#EAF3DE',c:'#27500A',cls:'green'},
+  problem:{name:'Problem-solving call',note:'Address a specific concern',chip:'P',bg:'#FAEEDA',c:'#633806',cls:'amber'},
+  followup:{name:'Follow-up call',note:'Close the loop, keep momentum',chip:'Fu',bg:'#EEEDFE',c:'#3C3489',cls:'purple'},
+  strategic:{name:'Strategic call',note:'KOLs, formulary, partnerships',chip:'S',bg:'#FAECE7',c:'#712B13',cls:'coral'},
+};
+
+const matrix={
+  analytical:{
+    flash:{open:'Leave a precise headline stat on a card. "Reduces HbA1c by 1.4% — details inside." No small talk.',dos:['One key data point only','Written leave-behind with the stat','Ask if a meeting slot is available'],donts:['Vague statements or anecdotes','Attempting a full call if time isn\'t there','Emotional appeals'],warn:'Analytical types filing a flash call away will remember if your stat was sloppy. Be exact.',checklist:['Prepare exact figure (not "roughly" or "around")','Write the stat on the leave-behind before you arrive','Confirm you know the study it comes from']},
+    educational:{open:'"You\'d asked about the trial design — I\'ve built this around the patient population, endpoint, and sub-group data. Shall we start with the methodology?"',dos:['Lead with the evidence structure','Present p-values, confidence intervals, sample size','Allow them to set the pace of questions','Offer to leave the full paper'],donts:['Use emotional stories as the main argument','Rush through the data','Make vague comparisons to competitors'],warn:'Analytical doctors will lose trust the moment they spot a number you can\'t explain. Know every data point on your slides.',checklist:['Review the key trial: n, endpoint, p-value, CI','Prepare sub-group data (elderly, renal, etc.)','Know 3 competitor comparison points with sources','Bring the full paper to leave behind']},
+    relationship:{open:'"I wanted to understand more about how you approach [their specialty area] before talking about the product — what\'s most important to you when evaluating new options?"',dos:['Ask evidence-based questions about their practice','Offer a relevant case study or paper as a gift','Let them guide the conversation direction'],donts:['Skip to the product too quickly','Use emotional appeals or personal stories','Make claims you can\'t back with data'],warn:'Even in a relationship call, an Analytical doctor is evaluating your credibility. Being imprecise will set you back.',checklist:['Research any recent publications in their specialty','Prepare one relevant article or study to offer','Prepare questions about their evidence preferences']},
+    problem:{open:'"You raised a concern about [issue] — I\'ve come back with the specific data that addresses exactly that."',dos:['Name the exact concern from last visit','Present the specific sub-group or safety data','Offer a printed summary to review after'],donts:['Deflect or reframe the concern','Use "most doctors find..." without data','Rush to close — let them process'],warn:'Analytical types will revisit your answer after you leave. If the data doesn\'t hold up, you won\'t get another visit.',checklist:['Review your notes — what exact concern did they raise?','Find the specific data set that addresses it','Prepare a one-page summary to leave behind','Know the limitations of the data honestly']},
+    followup:{open:'"I promised the [specific analysis] — here it is. I also wanted to check if anything came up when you reviewed the trial paper."',dos:['Reference the exact promise you made','Deliver the material before asking anything','Ask specific questions about what they reviewed'],donts:['Open with a product overview as if starting fresh','Ask general "any questions?" without context','Leave without proposing a concrete next step'],warn:'Analytical types remember promises precisely. Delivering late or delivering the wrong thing permanently damages credibility.',checklist:['Review notes: what exactly did you promise?','Prepare that exact material — nothing more, nothing less','Prepare one specific follow-up question about their review']},
+    strategic:{open:'"I\'ve pulled together the cost-effectiveness data and the formulary pathway — shall we work through the numbers together?"',dos:['Lead with data: cost-per-outcome, efficacy vs SOC','Have a formulary proposal document prepared','Know your approval limits on what you can offer'],donts:['Make the call feel like a regular detail','Come without a structured proposal','Over-promise on timelines or support'],warn:'KOL Analytical types will have done their own research. Know more than they do — or be honest about what you\'ll find out.',checklist:['Prepare cost-effectiveness modelling','Research current formulary status at this hospital','Prepare a one-page partnership proposal','Know competitive formulary positioning']},
+  },
+  driver:{
+    flash:{open:'"30 seconds — this reduces [outcome] by [X]%. Sample\'s with the receptionist. Can we get 10 minutes next week?"',dos:['One outcome stat. Stop.','Propose a specific next step','Respect the time — leave before they have to ask'],donts:['Small talk or warm-up conversation','Leaving without a clear ask','Multi-message updates'],warn:'A Driver who feels their time was wasted will be harder to see next time. Make the flash count with one sharp result.',checklist:['Prepare one outcome stat — the strongest one','Have a specific next-meeting request ready','Sample and leave-behind prepared before arrival']},
+    educational:{open:'"I\'ll be direct — here\'s the headline result, and I have the evidence behind it if you want to go deeper."',dos:['Lead with the outcome. Offer depth on demand.','Keep sentences short, conclusions first','Respect when they signal enough'],donts:['Long setup before the key result','Academic walk-throughs of methodology','Hesitation or hedging language'],warn:'Drivers decide fast. If the first 60 seconds don\'t land a clear benefit, they\'ve already disengaged.',checklist:['Prepare a one-line headline outcome to open','Structure: result → evidence → implication','Cut anything that doesn\'t directly support the benefit']},
+    relationship:{open:'"I know your time is valuable — I wanted to check in quickly and make sure what I\'m bringing you is actually useful for your practice."',dos:['Get to the point of your check-in','Show you remember their priorities from last visit','Propose value, not just presence'],donts:['Open-ended small talk','Lingering without a clear reason','Making them feel obligated to chat'],warn:'Drivers interpret aimless relationship calls as wasted visits. Frame the relationship call around their outcomes, not yours.',checklist:['Note the key thing they told you last visit','Prepare one relevant update or useful resource','Have a clear reason for the visit — even briefly']},
+    problem:{open:'"You said [exact objection]. Here\'s the direct answer: [solution in one sentence]. Here\'s the data behind it."',dos:['Name the concern precisely','Lead with the solution, then the evidence','Propose a concrete next action'],donts:['Long preamble before addressing the objection','Defensive language','Multiple alternative explanations'],warn:'Drivers want the solution first. Never bury the answer inside a long explanation.',checklist:['Write down the exact objection in one sentence','Prepare the solution in one sentence','Prepare 2 supporting data points — no more']},
+    followup:{open:'"I promised [X]. Here it is. Any questions, or shall we talk next steps?"',dos:['Deliver what you promised in the first sentence','Propose a next step immediately after','Keep it tight'],donts:['Recap of previous visit in detail','Asking how things are going before delivering','Rambling after you\'ve made your point'],warn:'Drivers log your follow-through. Delivering exactly what you promised on time is the highest-value trust signal with this type.',checklist:['Material promised — printed and ready','Next step proposal prepared','Visit target: under 10 minutes']},
+    strategic:{open:'"Here\'s why this matters for your department: [outcome]. I have the proposal — 3 key points. Shall we?"',dos:['Frame everything around their department goals','Lead with the business case','Have a clear ask by the end'],donts:['Background and product history','Letting the conversation drift','Leaving without a decision or next step'],warn:'Strategic calls with Drivers must open strong and close with a decision. No decision = failed call.',checklist:['Prepare 3-point business case','Know the specific department goal to align to','Prepare a clear ask: trial, formulary meeting, etc.']},
+  },
+  amiable:{
+    flash:{open:'Leave a warm handwritten note with the sample. "Thinking of your patients — thought this might help. Will check in soon."',dos:['Personal, warm tone in the note','Reference a patient context they\'ve mentioned before','Don\'t rush the interaction if they appear'],donts:['Cold or transactional drop-offs','Leaving without any personal touch','Pushing for a meeting on the spot'],warn:'Amiable types notice whether you care. A cold flash call feels like you\'re just checking a box.',checklist:['Write a personal note — reference their patients or a previous conversation','Bring a small, thoughtful leave-behind','No pressure — offer a follow-up only if natural']},
+    educational:{open:'"Before I get into the data, I wanted to check — how have things been going with your patients lately? What\'s been on your mind?"',dos:['Open with genuine interest in their patients','Let them guide which clinical aspects matter','Emphasise patient safety and quality of life data'],donts:['Cold, data-first opening','Clinical language without patient context','Rushing past their questions or stories'],warn:'Amiable doctors won\'t engage with clinical data until they trust you as a person. Earn the relationship before the evidence.',checklist:['Prepare patient-outcome focused data points','Prepare empathetic questions about their patient population','Have a patient-facing material to offer (info card, etc.)']},
+    relationship:{open:'"I genuinely wanted to hear how things have been — not about the product today. What\'s been happening in your practice?"',dos:['Listen more than you speak','Remember and reference what they share','Show real interest in their patients and challenges'],donts:['Steering back to product too soon','Asking questions just to fill silence','Forgetting what they told you last time'],warn:'Amiable types have long memories for who listened and who didn\'t. This call is an investment — pay attention.',checklist:['Review your notes: what did they share last visit?','Prepare 2 open questions about their practice','No product agenda today — be ready to set it aside completely']},
+    problem:{open:'"I hear that this has been a concern — your patients\' experience matters. Let me share what we\'ve seen, and tell me what you think."',dos:['Acknowledge the concern warmly first','Frame evidence around patient wellbeing','Invite their perspective after presenting'],donts:['Dismissing the concern with data alone','Debating or correcting them directly','Making it feel like a negotiation'],warn:'Amiable types shut down under pressure. If they feel challenged, the conversation ends — even if you\'re right.',checklist:['Write out the empathy statement to open with','Prepare patient-focused evidence (QoL data, adherence)','Prepare a patient tool to offer (tip card, etc.)']},
+    followup:{open:'"I\'ve been thinking about what you shared last time — I brought something I thought might be useful for your patients."',dos:['Reference a personal detail from the last visit','Frame the follow-through as caring, not transactional','Check in on their wellbeing genuinely'],donts:['Treating the follow-up as a data delivery','Opening with "as promised" without warmth','Rushing past the human moment'],warn:'Amiable types remember whether the follow-up felt like you cared or whether you were just closing a task.',checklist:['Review what personal detail they shared last visit','Prepare a warm, patient-focused framing for the material','Bring something small and thoughtful if appropriate']},
+    strategic:{open:'"I wanted to discuss something that I think could genuinely make a difference for your patients — and I\'d love to hear your thoughts before I suggest anything."',dos:['Frame the partnership around patient outcomes','Ask for their input before presenting your plan','Emphasise collaboration and shared goals'],donts:['Coming with a fixed proposal and no room for input','Heavy business language (ROI, market share)','Making it feel like a commercial transaction'],warn:'Amiable KOLs are motivated by impact, not influence. Connect the strategic opportunity to patients first, department metrics second.',checklist:['Prepare a patient-outcome framing for the proposal','Prepare 2 questions to invite their input','Be ready to adapt the proposal based on what they say']},
+  },
+  expressive:{
+    flash:{open:'Quick, warm, energetic. "I had to stop by — there\'s something exciting about this I wanted you to see before anyone else. [Stat]. More soon!"',dos:['Match their energy — be enthusiastic','Leave a visual, colourful leave-behind','Create curiosity for the next full visit'],donts:['Dry or transactional drop-off','Flat tone or minimal engagement','Leaving without creating intrigue'],warn:'An Expressive doctor remembers reps who brought energy. A flat flash call is a wasted impression.',checklist:['Prepare one intriguing hook — not just a stat','Choose the most visually engaging material to leave','Plan your exit line to create curiosity for next time']},
+    educational:{open:'"There\'s something genuinely exciting about the mechanism here — and the trial results back it up in a way that surprised even the researchers."',dos:['Frame the science as a discovery','Lead with the story, back it with data','Use visuals — MOA diagrams, infographics','Match their enthusiasm — let them get excited'],donts:['Dry slide-by-slide data walk-throughs','Flat, academic tone','Shutting down their tangents abruptly'],warn:'Expressives disengage from dry content fast. If the data isn\'t exciting, make the story of the data exciting.',checklist:['Prepare a hook narrative for the mechanism of action','Choose the most visual, engaging clinical slides','Prepare a real patient or trial story to open with','Be ready to follow their energy — don\'t stick rigidly to the order']},
+    relationship:{open:'"I genuinely wanted to hear what you\'ve been thinking about lately — I know you\'re always ahead of where the field is going."',dos:['Engage fully with their ideas and enthusiasm','Feed their curiosity with interesting updates','Be genuinely present — Expressives feel inauthenticity'],donts:['Steering to product prematurely','Subdued or formal tone','Interrupting their enthusiasm to get back on track'],warn:'Expressives decide on people before they decide on products. Be the most interesting person they\'ve seen this week.',checklist:['Find one exciting development in their specialty to discuss','Prepare to listen enthusiastically and ask follow-up questions','No product agenda — let the energy lead']},
+    problem:{open:'"I hear you — and actually, a colleague\'s patient had the exact same concern. Here\'s what happened, and here\'s the data behind why it resolved."',dos:['Lead with a story that mirrors their concern','Follow the story with the evidence','Give them a talking point to share with patients'],donts:['Data-dump without a narrative','Dismissing the concern as uncommon','Formal or defensive tone'],warn:'Expressives who had a bad patient experience need an emotional counter-story before any data lands.',checklist:['Prepare a patient narrative that addresses the concern','Prepare the supporting data as a follow-up to the story','Prepare a patient communication tool they can use']},
+    followup:{open:'"I\'ve been thinking about our last conversation — you asked about [topic] and I found something that\'s right up your street."',dos:['Reference the specific thing they said with enthusiasm','Frame the follow-up as something exciting you found','Keep the energy up — celebrate any progress'],donts:['Treating the visit as a routine check-in','Formal or transactional tone','Forgetting the emotional highlights of the last visit'],warn:'Expressives expect you to remember what excited them. A follow-up that feels like any other visit loses the connection.',checklist:['Note: what were they most excited about last visit?','Prepare something that connects to that energy','Open with a reference to their exact words or reaction']},
+    strategic:{open:'"This is bigger than a single product — this is about transforming how [condition] is managed in your department. I want to hear your vision first."',dos:['Open with a bold, inspiring framing','Let them co-create the vision','Use language like "first in class", "game-changing", "leading edge"'],donts:['Heavy process and proposal language','Dry cost-effectiveness tables as the opener','Constraining their ideas too early'],warn:'Expressive KOLs want to be part of something exciting. If the strategic call feels like admin, they\'ll disengage.',checklist:['Prepare a bold, inspiring one-paragraph vision statement','Prepare to listen first and present second','Frame the proposal around legacy and patient impact, not metrics']},
+  },
+};
+
+let selType=null,selCall=null;
+
+function buildTypeGrid(){
+  const g=document.getElementById('type-grid');g.innerHTML='';
+  Object.entries(types).forEach(([k,t])=>{
+    const d=document.createElement('div');
+    d.className='sel-card'+(selType===k?' chosen '+t.cls:'');
+    d.innerHTML=`<div class="sc-chip" style="background:${t.bg};color:${t.c}">${t.chip}</div><div class="sc-name">${t.name}</div><div class="sc-note">${t.note}</div>`;
+    d.onclick=()=>{selType=k;buildTypeGrid();goStep(2)};
+    g.appendChild(d);
+  });
+}
+
+function buildCallGrid(){
+  const g=document.getElementById('call-grid');g.innerHTML='';
+  Object.entries(calls).forEach(([k,c])=>{
+    const d=document.createElement('div');
+    d.className='sel-card'+(selCall===k?' chosen '+c.cls:'');
+    d.innerHTML=`<div class="sc-chip" style="background:${c.bg};color:${c.c}">${c.chip}</div><div class="sc-name">${c.name}</div><div class="sc-note">${c.note}</div>`;
+    d.onclick=()=>{selCall=k;buildCallGrid();buildOutput();goStep(3)};
+    g.appendChild(d);
+  });
+}
+
+function buildOutput(){
+  const T=types[selType];const C=calls[selCall];
+  const m=matrix[selType][selCall];
+  const card=document.getElementById('output-card');
+  const doItems=m.dos.map(d=>`<div class="ob-item">${d}</div>`).join('');
+  const dontItems=m.donts.map(d=>`<div class="ob-item">${d}</div>`).join('');
+  card.innerHTML=`
+    <div class="output-header">
+      <span class="badge" style="background:${T.bg};color:${T.c}">${T.name} doctor</span>
+      <span style="font-size:12px;color:var(--color-text-tertiary)">+</span>
+      <span class="badge" style="background:${C.bg};color:${C.c}">${C.name}</span>
+    </div>
+    <div class="output-body">
+      <div class="opener-strip">
+        <div class="op-label">Opening move</div>
+        <div class="op-text">${m.open}</div>
+      </div>
+      <div class="out-grid">
+        <div class="out-box do"><div class="ob-label">Do this</div>${doItems}</div>
+        <div class="out-box dont"><div class="ob-label">Avoid this</div>${dontItems}</div>
+      </div>
+      <div class="warn-strip">
+        <div class="wl">Watch out for</div>
+        <div class="wt">${m.warn}</div>
+      </div>
+    </div>
+  `;
+  const cl=document.getElementById('checklist');cl.innerHTML='';
+  m.checklist.forEach((item,i)=>{
+    const row=document.createElement('div');row.className='cl-item';row.id='cl-'+i;
+    row.innerHTML=`<div class="cl-box" id="box-${i}"><svg class="cl-check" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="cl-text">${item}</div>`;
+    row.onclick=()=>toggleCheck(i);
+    cl.appendChild(row);
+  });
+}
+
+function toggleCheck(i){
+  const box=document.getElementById('box-'+i);
+  const row=document.getElementById('cl-'+i);
+  const checked=box.classList.contains('checked');
+  if(checked){box.classList.remove('checked');row.classList.remove('cl-done')}
+  else{box.classList.add('checked');row.classList.add('cl-done')}
+}
+
+function goStep(n){
+  document.getElementById('step1').style.display=n>=1?'block':'none';
+  document.getElementById('step2').style.display=n>=2?'block':'none';
+  document.getElementById('step3').style.display=n>=3?'block':'none';
+  if(n===2)buildCallGrid();
+  [1,2,3].forEach(i=>{
+    const dot=document.getElementById('dot'+i);
+    dot.className='step-dot'+(i<n?' done':i===n?' active':'');
+    if(i<3){const line=document.getElementById('line'+i);line.className='step-line'+(i<n?' done':'')}
+  });
+}
+
+function resetAll(){selType=null;selCall=null;buildTypeGrid();goStep(1)}
+
+buildTypeGrid();
+goStep(1);
+</script>
